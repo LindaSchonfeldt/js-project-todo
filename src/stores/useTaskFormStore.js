@@ -38,7 +38,7 @@ export const useTaskFormStore = create((set, get) => ({
       isValid: false
     }),
 
-  // Update form field
+  // Update form field values in the store
   setField: (field, value) =>
     set((state) => {
       const newState = {
@@ -55,7 +55,6 @@ export const useTaskFormStore = create((set, get) => ({
       return newState
     }),
 
-  // Validate a specific field
   // Validate a specific field
   validateField: (field) => {
     const state = get()

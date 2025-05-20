@@ -6,3 +6,7 @@ export const media = {
   laptop: '@media (min-width: 1024px) and (max-width: 1439px)',
   desktop: '@media (min-width: 1440px)'
 }
+
+// Use example:
+// ${media.mobile} {
+//   font-size: 14px;

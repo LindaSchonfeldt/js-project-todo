@@ -1,6 +1,5 @@
 import styled from 'styled-components'
 import { useTaskStore } from '../stores/useTaskStore'
-import { Badge } from './Badge'
 
 const StyledTaskItem = styled.div`
   padding: 1rem;
@@ -11,29 +10,6 @@ const StyledTaskItem = styled.div`
   justify-content: space-between;
   align-items: center;
 `
-
-export const TaskItem = ({ task }) => {
-  const { completeTask } = useTaskStore()
-
-  return (
-    <StyledTaskItem completed={task.completed}>
-      <div>
-        <h3>{task.title}</h3>
-        {task.description && <p>{task.description}</p>}
-        {task.dueDate && (
-          <p>Due: {new Date(task.dueDate).toLocaleDateString()}</p>
-        )}
-        <Badge priority={task.priority}>{task.priority}</Badge>
-      </div>
-
-      <div>
-        {!task.completed && (
-          <button onClick={() => completeTask(task.id)}>Complete</button>
-        )}
-      </div>
-    </StyledTaskItem>
-  )
-}
 
 // Badge for priority
 const StyledBadge = styled.span`
@@ -54,3 +30,41 @@ const StyledBadge = styled.span`
   }};
   color: white;
 `
+
+const StyledDeleteButton = styled.button`
+  background-color: transparent;
+  border: none;
+  color: #ff5252;
+  cursor: pointer;
+  font-size: 1rem;
+
+  &:hover {
+    color: #ff1744;
+  }
+`
+
+export const TaskItem = ({ task }) => {
+  const { completeTask, removeTask } = useTaskStore()
+
+  return (
+    <StyledTaskItem completed={task.completed}>
+      <div>
+        <h3>{task.title}</h3>
+        {task.description && <p>{task.description}</p>}
+        {task.dueDate && (
+          <p>Due: {new Date(task.dueDate).toLocaleDateString()}</p>
+        )}
+        <StyledDeleteButton onClick={() => removeTask(task.id)}>
+          Delete
+        </StyledDeleteButton>
+        <StyledBadge priority={task.priority}>{task.priority}</StyledBadge>
+      </div>
+
+      <div>
+        {!task.completed && (
+          <button onClick={() => completeTask(task.id)}>Complete</button>
+        )}
+      </div>
+    </StyledTaskItem>
+  )
+}

@@ -1,4 +1,5 @@
 import { createGlobalStyle } from 'styled-components'
+import { media } from './media'
 
 export const GlobalStyle = createGlobalStyle`
   * {
@@ -6,10 +7,28 @@ export const GlobalStyle = createGlobalStyle`
     padding: 0;
     box-sizing: border-box;
   }
-    body {
+
+  body {
     font-family: 'Poppins', sans-serif;
     background-color: #f0f0f0;
     color: #333;
+    width: 100%;
+    margin: 32px 16px 132px 16px; 
+
+
+    ${media.tablet} {
+      font-size: 16px;
+      width: 70%;
+
+    }
+    ${media.laptop} {
+      font-size: 18px;
+      width: 50%;
+    }
+    ${media.desktop} {
+      font-size: 20px;
+      width: 40%;
+    }
   }
     
   a {

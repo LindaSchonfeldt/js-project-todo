@@ -1,5 +1,12 @@
+import styled from 'styled-components'
 import { useTaskStore } from '../stores/useTaskStore'
 import { useTaskFormStore } from '../stores/useTaskFormStore'
+
+const StyledForm = styled.form`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+`
 
 export const TaskForm = () => {
   const { addTask, getNextId } = useTaskStore()
@@ -17,17 +24,18 @@ export const TaskForm = () => {
       priority,
       completed: false
     }
-
+    console.log('New Task:', newTask)
+    // Add the new task to the store
     addTask(newTask)
     resetForm()
   }
   return (
-    <form onSubmit={handleSubmit}>
+    <StyledForm onSubmit={handleSubmit}>
       <label htmlFor='date'>Due date</label>
       <input
         type='date'
         id='dueDate'
-        value={dueDate}
+        value={dueDate || new Date().toISOString().split('T')[0]}
         onChange={(e) => setField('dueDate', e.target.value)}
         required
       />
@@ -51,7 +59,7 @@ export const TaskForm = () => {
         <label htmlFor='priority'>Priority</label>
         <select
           id='priority'
-          value={priority}
+          value={priority || 'low'}
           onChange={(e) => setField('priority', e.target.value)}
         >
           <option value='low'>Low</option>
@@ -60,6 +68,6 @@ export const TaskForm = () => {
         </select>
       </div>
       <button type='submit'>Add Task</button>
-    </form>
+    </StyledForm>
   )
 }

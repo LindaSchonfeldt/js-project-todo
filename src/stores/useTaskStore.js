@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 
-export const useTaskStore = create((set) => ({
+export const useTaskStore = create((set, get) => ({
   tasks: [],
   completedTasks: [], // Array to store completed tasks
 
@@ -54,13 +54,11 @@ export const useTaskStore = create((set) => ({
     }),
 
   // Get next ID for a new task
-  getNextId: () =>
-    set((state) => {
-      const maxId = Math.max(
-        0,
-        ...state.tasks.map((t) => t.id),
-        ...state.completedTasks.map((t) => t.id)
-      )
-      return maxId + 1
-    })
+  getNextId: () => {
+    const state = get()
+    const taskIds = state.tasks.map((t) => t.id) || []
+    const completedTaskIds = state.completedTasks.map((t) => t.id) || []
+    const allTaskIds = [...taskIds, ...completedTaskIds]
+    return allTaskIds.length > 0 ? Math.max(...allTaskIds) + 1 : 1
+  }
 }))
