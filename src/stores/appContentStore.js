@@ -6,6 +6,6 @@ export const appContentStore = create(() => ({
     addTaskButton: 'Add',
     editTaskButton: 'Edit',
     deleteTaskButton: 'Delete',
-    completeTaskButton: 'Complete Task'
+    completeTaskButton: '✔️'
   }
 }))

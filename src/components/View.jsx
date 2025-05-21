@@ -34,7 +34,7 @@ const EmptyState = ({ view }) => {
 }
 
 export const View = () => {
-  const [activeView, setActiveView] = useState('today')
+  const [activeView, setActiveView] = useState('all')
   const { tasks, completedTasks } = useTaskStore()
 
   // Add the handleViewChange function here
@@ -74,6 +74,10 @@ export const View = () => {
     let filteredTasks
 
     switch (activeView) {
+      case 'all':
+        filteredTasks = [...(tasks || []), ...(completedTasks || [])]
+        break
+
       case 'today':
         filteredTasks = tasks.filter((task) => {
           // Tasks with no due date or due today/past
@@ -108,10 +112,6 @@ export const View = () => {
         filteredTasks = completedTasks || []
         break
 
-      case 'all':
-        filteredTasks = [...(tasks || []), ...(completedTasks || [])]
-        break
-
       default:
         filteredTasks = tasks || []
     }
@@ -123,10 +123,10 @@ export const View = () => {
   const filteredTasks = getFilteredTasks()
 
   const sortingOptions = [
+    { label: 'All', value: 'all' },
     { label: 'Today', value: 'today' },
     { label: 'Next seven days', value: 'next seven days' },
-    { label: 'Completed', value: 'completed' },
-    { label: 'All', value: 'all' }
+    { label: 'Completed', value: 'completed' }
   ]
 
   return (
@@ -146,10 +146,16 @@ export const View = () => {
 
       <Tabs>
         <Tab
+          $active={activeView === 'all'}
+          onClick={() => setActiveView('all')}
+        >
+          All
+        </Tab>
+        <Tab
           $active={activeView === 'today'}
           onClick={() => setActiveView('today')}
         >
-          Current
+          Today
         </Tab>
         <Tab
           $active={activeView === 'next seven days'}
@@ -162,12 +168,6 @@ export const View = () => {
           onClick={() => setActiveView('completed')}
         >
           Completed
-        </Tab>
-        <Tab
-          $active={activeView === 'all'}
-          onClick={() => setActiveView('all')}
-        >
-          All
         </Tab>
       </Tabs>
 

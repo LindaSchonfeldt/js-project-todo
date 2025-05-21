@@ -4,6 +4,21 @@ export const useTaskStore = create((set, get) => ({
   tasks: [],
   completedTasks: [],
 
+  // Save to local storage
+  saveToLocalStorage: () => {
+    const state = get()
+    localStorage.setItem('tasks', JSON.stringify(state.tasks))
+    localStorage.setItem('completedTasks', JSON.stringify(state.completedTasks))
+  },
+
+  // Load from local storage
+  loadFromLocalStorage: () => {
+    const tasks = JSON.parse(localStorage.getItem('tasks')) || []
+    const completedTasks =
+      JSON.parse(localStorage.getItem('completedTasks')) || []
+    set({ tasks, completedTasks })
+  },
+
   // Add a task
   addTask: (task) => {
     if (task.dueDate) {
@@ -22,21 +37,6 @@ export const useTaskStore = create((set, get) => ({
 
     // Then save to localStorage
     get().saveToLocalStorage()
-  },
-
-  // Save to local storage
-  saveToLocalStorage: () => {
-    const state = get()
-    localStorage.setItem('tasks', JSON.stringify(state.tasks))
-    localStorage.setItem('completedTasks', JSON.stringify(state.completedTasks))
-  },
-
-  // Load from local storage
-  loadFromLocalStorage: () => {
-    const tasks = JSON.parse(localStorage.getItem('tasks')) || []
-    const completedTasks =
-      JSON.parse(localStorage.getItem('completedTasks')) || []
-    set({ tasks, completedTasks })
   },
 
   // Remove a task
@@ -89,7 +89,7 @@ export const useTaskStore = create((set, get) => ({
           tasks: [...state.tasks, updatedTask]
         }
       }
-    }),
+    }, get().saveToLocalStorage()),
 
   // Get next ID for a new task
   getNextId: () => {
