@@ -2,19 +2,57 @@ import { create } from 'zustand'
 
 export const useTaskStore = create((set, get) => ({
   tasks: [],
-  completedTasks: [], // Array to store completed tasks
+  completedTasks: [],
 
   // Add a task
-  addTask: (task) =>
+  addTask: (task) => {
+    if (task.dueDate) {
+      const dueDate = new Date(task.dueDate)
+      const today = new Date()
+      today.setHours(0, 0, 0, 0) // Reset time to start of day
+
+      if (dueDate < today) {
+        task.dueDate = null
+      }
+    }
+
     set((state) => ({
       tasks: [...state.tasks, task]
-    })),
+    }))
+
+    // Then save to localStorage
+    get().saveToLocalStorage()
+  },
+
+  // Save to local storage
+  saveToLocalStorage: () => {
+    const state = get()
+    localStorage.setItem('tasks', JSON.stringify(state.tasks))
+    localStorage.setItem('completedTasks', JSON.stringify(state.completedTasks))
+  },
+
+  // Load from local storage
+  loadFromLocalStorage: () => {
+    const tasks = JSON.parse(localStorage.getItem('tasks')) || []
+    const completedTasks =
+      JSON.parse(localStorage.getItem('completedTasks')) || []
+    set({ tasks, completedTasks })
+  },
 
   // Remove a task
   removeTask: (taskId) =>
-    set((state) => ({
-      tasks: state.tasks.filter((task) => task.id !== taskId)
-    })),
+    set((state) => {
+      // First filter out the task
+      const updatedTasks = state.tasks.filter((task) => task.id !== taskId)
+
+      // Save to local storage
+      localStorage.setItem('tasks', JSON.stringify(updatedTasks))
+
+      // Return the new state
+      return {
+        tasks: updatedTasks
+      }
+    }),
 
   // Edit a task
   editTask: (editedTask) =>

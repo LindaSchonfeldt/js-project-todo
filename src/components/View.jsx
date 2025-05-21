@@ -1,38 +1,14 @@
 import styled from 'styled-components'
-import { media } from '../styles/media'
 import { useState } from 'react'
 import { useTaskStore } from '../stores/useTaskStore'
 import { TaskItem } from './TaskItem'
 import { Dropdown } from './Dropdown'
+import { Tabs, Tab } from './Tabs'
 
 const StyledView = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
-`
-
-const ViewTabs = styled.div`
-  display: none;
-
-  ${media.tablet} {
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 1rem;
-  }
-`
-
-const Tab = styled.button`
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 4px;
-  background-color: ${(props) => (props.$active ? '#4a90e2' : '#e0e0e0')};
-  color: ${(props) => (props.$active ? 'white' : 'black')};
-  cursor: pointer;
-  transition: background-color 0.2s;
-
-  &:hover {
-    background-color: ${(props) => (props.$active ? '#4a90e2' : '#d0d0d0')};
-  }
 `
 
 const TaskList = styled.div`
@@ -66,23 +42,51 @@ export const View = () => {
     setActiveView(e.target.value)
   }
 
+  // Function to sort tasks by priority
+  const sortTasksByPriority = (tasksToSort) => {
+    const priorityOrder = { high: 1, medium: 2, low: 3 }
+
+    return [...tasksToSort].sort((a, b) => {
+      // First sort by priority
+      if (priorityOrder[a.priority] !== priorityOrder[b.priority]) {
+        return priorityOrder[a.priority] - priorityOrder[b.priority]
+      }
+
+      // If priorities are the same, sort by due date (if available)
+      if (a.dueDate && b.dueDate) {
+        return new Date(a.dueDate) - new Date(b.dueDate)
+      }
+
+      // Tasks with due dates come before tasks without due dates
+      if (a.dueDate && !b.dueDate) return -1
+      if (!a.dueDate && b.dueDate) return 1
+
+      // If all else is equal, sort by title alphabetically
+      return a.title.localeCompare(b.title)
+    })
+  }
+
   // Get filtered tasks based on active view
   const getFilteredTasks = () => {
     const today = new Date()
     today.setHours(0, 0, 0, 0)
 
+    let filteredTasks
+
     switch (activeView) {
       case 'today':
-        return tasks.filter((task) => {
+        filteredTasks = tasks.filter((task) => {
           // Tasks with no due date or due today/past
           if (!task.dueDate) return true
           const dueDate = new Date(task.dueDate)
+          dueDate.setHours(0, 0, 0, 0)
           // Use getTime() for date comparison
           return dueDate.getTime() === today.getTime()
         })
+        break
 
       case 'next seven days':
-        return tasks.filter((task) => {
+        filteredTasks = tasks.filter((task) => {
           // Tasks due within the next 7 days
           if (!task.dueDate) return false
 
@@ -98,15 +102,22 @@ export const View = () => {
             dueDate.getTime() <= oneWeekFromToday.getTime()
           )
         })
+        break
 
       case 'completed':
-        return completedTasks
+        filteredTasks = completedTasks || []
+        break
 
       case 'all':
-        return [...(tasks || []), ...(completedTasks || [])]
+        filteredTasks = [...(tasks || []), ...(completedTasks || [])]
+        break
+
       default:
-        return tasks || []
+        filteredTasks = tasks || []
     }
+
+    // Apply priority sorting to the filtered tasks
+    return sortTasksByPriority(filteredTasks)
   }
 
   const filteredTasks = getFilteredTasks()
@@ -120,7 +131,7 @@ export const View = () => {
 
   return (
     <StyledView>
-      {/* Dropdown view for mobile */}
+      {/* Dropdown view for mobile and tablet */}
       <Dropdown
         options={sortingOptions}
         onChange={handleViewChange}
@@ -133,7 +144,7 @@ export const View = () => {
         ))}
       </Dropdown>
 
-      <ViewTabs>
+      <Tabs>
         <Tab
           $active={activeView === 'today'}
           onClick={() => setActiveView('today')}
@@ -158,9 +169,10 @@ export const View = () => {
         >
           All
         </Tab>
-      </ViewTabs>
+      </Tabs>
 
       <TaskList>
+        {/* Render tasks */}
         {filteredTasks && filteredTasks.length > 0 ? (
           filteredTasks.map((task) => <TaskItem key={task.id} task={task} />)
         ) : (

@@ -11,7 +11,6 @@ export const Home = () => {
       <h1>{appContent.heading}</h1>
       <TaskForm />
       <View />
-      <Dropdown />
     </>
   )
 }

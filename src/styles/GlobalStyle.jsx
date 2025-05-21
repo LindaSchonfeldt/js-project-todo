@@ -9,7 +9,12 @@ export const GlobalStyle = createGlobalStyle`
   }
 
   body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     font-family: 'Poppins', sans-serif;
+    font-size: 16px;
     background-color: #f0f0f0;
     color: #333;
     width: 100%;
@@ -17,17 +22,14 @@ export const GlobalStyle = createGlobalStyle`
 
 
     ${media.tablet} {
-      font-size: 16px;
-      width: 70%;
+      width: 350px;
 
     }
     ${media.laptop} {
-      font-size: 18px;
-      width: 50%;
+      width: 500px;
     }
     ${media.desktop} {
-      font-size: 20px;
-      width: 40%;
+      width: 600px;
     }
   }
     
