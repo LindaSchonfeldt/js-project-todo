@@ -1,6 +1,17 @@
 import styled from 'styled-components'
 import { media } from '../styles/media'
 
+const DropdownContainer = styled.div`
+  width: 100%;
+`
+
+const Label = styled.label`
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 14px;
+  color: var(--color-text);
+`
+
 const StyledDropdown = styled.select`
   width: 100%;
   padding: 0.5rem;
@@ -24,17 +35,39 @@ const StyledDropdown = styled.select`
   }
 `
 
-export const Dropdown = ({ options = [], onChange, value }) => {
+export const Dropdown = ({
+  options = [],
+  onChange,
+  value,
+  label,
+  id = 'dropdown',
+  ariaLabel,
+  required = false
+}) => {
   // Add defensive check
   const safeOptions = Array.isArray(options) ? options : []
 
   return (
-    <StyledDropdown onChange={onChange} value={value}>
-      {safeOptions.map((option) => (
-        <option key={option.value} value={option.value}>
-          {option.label}
-        </option>
-      ))}
-    </StyledDropdown>
+    <DropdownContainer>
+      {label && (
+        <Label htmlFor={id}>
+          {label}
+          {required && <span aria-hidden='true'> *</span>}
+        </Label>
+      )}
+      <StyledDropdown
+        id={id}
+        onChange={onChange}
+        value={value}
+        aria-label={!label ? ariaLabel || 'Select an option' : undefined}
+        aria-required={required}
+      >
+        {safeOptions.map((option) => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
+      </StyledDropdown>
+    </DropdownContainer>
   )
 }

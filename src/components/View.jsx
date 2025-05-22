@@ -126,8 +126,6 @@ export const View = () => {
     return sortTasksByPriority(filteredTasks)
   }
 
-  const filteredTasks = getFilteredTasks()
-
   const sortingOptions = [
     { label: 'All', value: 'all' },
     { label: 'Today', value: 'today' },
@@ -177,14 +175,15 @@ export const View = () => {
         </Tab>
       </Tabs>
 
-      <TaskList>
-        {/* Render tasks */}
-        {filteredTasks && filteredTasks.length > 0 ? (
-          filteredTasks.map((task) => <TaskItem key={task.id} task={task} />)
-        ) : (
-          <EmptyState view={activeView} />
-        )}
-      </TaskList>
+      {getFilteredTasks().length === 0 ? (
+        <EmptyState view={activeView} />
+      ) : (
+        <TaskList>
+          {getFilteredTasks().map((task) => (
+            <TaskItem key={task.id} task={task} />
+          ))}
+        </TaskList>
+      )}
     </StyledView>
   )
 }

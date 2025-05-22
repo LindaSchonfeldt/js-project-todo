@@ -107,44 +107,52 @@ export const useTaskStore = create(
     },
 
     // Complete a task
+    // In the zustand store (useTaskStore.js or similar)
     completeTask: (taskId) => {
-      if (!taskId) return
-
       set((state) => {
-        // Find the task to complete - check both active and completed tasks
-        const taskFromActive = state.tasks.find((task) => task.id === taskId)
-        const taskFromCompleted = state.completedTasks.find(
-          (task) => task.id === taskId
-        )
+        const taskToComplete = state.tasks.find((task) => task.id === taskId)
 
-        // Determine which array contains the task
-        const taskToComplete = taskFromActive || taskFromCompleted
+        if (!taskToComplete) {
+          // Check if the task is in the completed array (for toggling back)
+          const completedTask = state.completedTasks.find(
+            (task) => task.id === taskId
+          )
 
-        if (!taskToComplete) return state
+          if (completedTask) {
+            // Move from completedTasks back to tasks
+            const updatedCompletedTasks = state.completedTasks.filter(
+              (task) => task.id !== taskId
+            )
+
+            const updatedTask = {
+              ...completedTask,
+              completed: false
+            }
+
+            return {
+              tasks: [...state.tasks, updatedTask],
+              completedTasks: updatedCompletedTasks
+            }
+          }
+
+          return state // Task not found in either array
+        }
+
+        // Move from tasks to completedTasks
+        const updatedTasks = state.tasks.filter((task) => task.id !== taskId)
 
         const updatedTask = {
           ...taskToComplete,
-          completed: !taskToComplete.completed
+          completed: true
         }
 
-        if (taskFromActive) {
-          // Move from active to completed
-          return {
-            tasks: state.tasks.filter((task) => task.id !== taskId),
-            completedTasks: [...state.completedTasks, updatedTask]
-          }
-        } else {
-          // Move from completed to active
-          return {
-            completedTasks: state.completedTasks.filter(
-              (task) => task.id !== taskId
-            ),
-            tasks: [...state.tasks, { ...updatedTask, completed: false }]
-          }
+        return {
+          tasks: updatedTasks,
+          completedTasks: [...state.completedTasks, updatedTask]
         }
       })
 
-      // Save to localStorage after updating state
+      // Save changes to localStorage
       get().saveToLocalStorage()
     },
 

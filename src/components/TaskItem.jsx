@@ -1,7 +1,6 @@
 import styled from 'styled-components'
 import { useTaskStore } from '../stores/useTaskStore'
-import { FaRegSquareCheck } from 'react-icons/fa6'
-import { FaRegSquare } from 'react-icons/fa6'
+import { FaRegSquare, FaRegSquareCheck } from 'react-icons/fa6'
 import { FaTrash } from 'react-icons/fa'
 import { formatDate } from '../utils/dateUtils'
 
@@ -98,6 +97,8 @@ const StyledCompleteButton = styled.button`
 `
 
 export const TaskItem = ({ task }) => {
+  console.log('Task in TaskItem:', task)
+
   const { completeTask, removeTask } = useTaskStore()
 
   // Add defensive check for task properties
@@ -129,9 +130,9 @@ export const TaskItem = ({ task }) => {
           completed={task.completed}
         >
           {task.completed ? (
-            <FaRegSquare size={32} />
-          ) : (
             <FaRegSquareCheck size={32} />
+          ) : (
+            <FaRegSquare size={32} />
           )}
         </StyledCompleteButton>
       </div>

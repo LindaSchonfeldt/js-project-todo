@@ -7,10 +7,14 @@ export const Home = () => {
   const { appContent } = appContentStore() // Accessing (de-constructing) the appContent from Zustand store
 
   return (
-    <>
-      <h1>{appContent.heading}</h1>
-      <TaskForm />
-      <View />
-    </>
+    <main aria-labelledby='page-heading'>
+      <h1 id='page-heading'>{appContent.heading}</h1>
+      <section aria-label='Add new task'>
+        <TaskForm />
+      </section>
+      <section aria-label='Task list view'>
+        <View />
+      </section>
+    </main>
   )
 }
