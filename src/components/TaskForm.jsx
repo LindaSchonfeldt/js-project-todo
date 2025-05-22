@@ -1,7 +1,9 @@
+import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { useTaskStore } from '../stores/useTaskStore'
 import { useTaskFormStore } from '../stores/useTaskFormStore'
 import { appContentStore } from '../stores/appContentStore'
+import { Button } from './Button'
 
 const StyledForm = styled.form`
   display: flex;
@@ -102,6 +104,11 @@ export const TaskForm = () => {
     validateField,
     validateForm
   } = useTaskFormStore()
+  const [isFormValid, setIsFormValid] = useState(false)
+
+  useEffect(() => {
+    setIsFormValid(validateForm())
+  }, [dueDate, title, description, priority, validateForm])
 
   const { appContent } = appContentStore()
 
@@ -109,9 +116,7 @@ export const TaskForm = () => {
     e.preventDefault()
 
     // Validate form before submission
-    const isValid = validateForm()
-
-    if (!isValid) {
+    if (!isFormValid) {
       return
     }
 
@@ -215,7 +220,9 @@ export const TaskForm = () => {
         </select>
         {errors.priority && <p className='error-message'>{errors.priority}</p>}
       </div>
-      <button type='submit'>{appContent.addTaskButton || 'Add Task'}</button>
+      <Button type='submit' disabled={!isFormValid}>
+        {appContent.addTaskButton || 'Add Task'}
+      </Button>
     </StyledForm>
   )
 }
