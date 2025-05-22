@@ -135,7 +135,9 @@ export const TaskForm = () => {
   return (
     <StyledForm onSubmit={handleSubmit}>
       <div className='form-group'>
-        <label htmlFor='dueDate'>{appContent.dueDateLabel || 'Due Date'}</label>{' '}
+        <label htmlFor='dueDate' className='visually-hidden'>
+          {appContent.dueDateLabel || 'Due Date'}
+        </label>
         <input
           type='date'
           id='dueDate'
@@ -160,7 +162,9 @@ export const TaskForm = () => {
         {errors.dueDate && <p className='error-message'>{errors.dueDate}</p>}
       </div>
       <div className='form-group'>
-        <label htmlFor='title'>{appContent.titleLabel || 'Title'}</label>
+        <label htmlFor='title' className='visually-hidden'>
+          {appContent.titleLabel || 'Title'}
+        </label>
         <input
           type='text'
           id='title'
@@ -174,7 +178,7 @@ export const TaskForm = () => {
         {errors.title && <p className='error-message'>{errors.title}</p>}
       </div>{' '}
       <div className='form-group'>
-        <label htmlFor='description'>
+        <label htmlFor='description' className='visually-hidden'>
           {appContent.descriptionLabel || 'Description'}
         </label>
         <textarea
@@ -193,7 +197,7 @@ export const TaskForm = () => {
         )}
       </div>
       <div className='form-group'>
-        <label htmlFor='priority'>
+        <label htmlFor='priority' className='visually-hidden'>
           {appContent.priorityLabel || 'Priority'}
         </label>
         <select

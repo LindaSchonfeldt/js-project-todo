@@ -3,7 +3,7 @@ import { create } from 'zustand'
 export const appContentStore = create(() => ({
   appContent: {
     heading: 'Remind Me',
-    addTaskButton: 'Add',
+    addTaskButton: 'Add task',
     editTaskButton: 'Edit',
     deleteTaskButton: 'Delete',
     // Form Labels
@@ -12,8 +12,8 @@ export const appContentStore = create(() => ({
     descriptionLabel: 'Description',
     priorityLabel: 'Priority',
     // Placeholders
-    taskTitlePlaceholder: 'Enter task title',
-    taskDescriptionPlaceholder: 'Enter task description',
+    taskTitlePlaceholder: 'Title',
+    taskDescriptionPlaceholder: 'Description',
     // Priority options
     lowPriority: 'Low',
     mediumPriority: 'Medium',
