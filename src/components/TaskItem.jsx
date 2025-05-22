@@ -1,6 +1,7 @@
 import styled from 'styled-components'
 import { useTaskStore } from '../stores/useTaskStore'
-import { CiSquareCheck } from 'react-icons/ci'
+import { FaRegSquareCheck } from 'react-icons/fa6'
+import { FaRegSquare } from 'react-icons/fa6'
 import { FaTrash } from 'react-icons/fa'
 import { formatDate } from '../utils/dateUtils'
 
@@ -73,7 +74,8 @@ const StyledDeleteButton = styled.button`
 `
 const StyledCompleteButton = styled.button`
   background-color: transparent;
-  color: var(--color-secondary);
+  color: ${(props) =>
+    props.completed ? 'var(--color-success)' : 'var(--color-secondary)'};
   border: none;
   border-radius: 4px;
   cursor: pointer;
@@ -81,15 +83,17 @@ const StyledCompleteButton = styled.button`
   align-items: center;
   justify-content: center;
 
+  /* Make the icon bolder/filled when task is completed */
+  svg {
+    transition: transform 0.2s ease, color 0.2s ease;
+    transform: ${(props) => (props.completed ? 'scale(1.1)' : 'scale(1)')};
+  }
+
   &:hover {
     color: var(--color-secondary-dark);
     svg {
-      transform: scale(1.1); /* Makes the icon slightly larger on hover */
+      transform: scale(1.1);
     }
-  }
-
-  svg {
-    transition: transform 0.2s ease;
   }
 `
 
@@ -101,7 +105,7 @@ export const TaskItem = ({ task }) => {
   return (
     <StyledTaskItem completed={task.completed}>
       <div className='topRow'>
-        {task.dueDate && <p>{formatDate(task.dueDate)}</p>}
+        <p>{task.dueDate ? formatDate(task.dueDate) : 'No due date'}</p>
         <StyledBadge priority={task.priority || 'low'}>
           {task.priority || 'low'}
         </StyledBadge>
@@ -122,8 +126,13 @@ export const TaskItem = ({ task }) => {
           aria-label={
             task.completed ? 'Mark as incomplete' : 'Mark as complete'
           }
+          completed={task.completed}
         >
-          <CiSquareCheck size={32} />
+          {task.completed ? (
+            <FaRegSquare size={32} />
+          ) : (
+            <FaRegSquareCheck size={32} />
+          )}
         </StyledCompleteButton>
       </div>
     </StyledTaskItem>
