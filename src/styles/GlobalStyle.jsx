@@ -4,10 +4,10 @@ import { media } from './media'
 export const GlobalStyle = createGlobalStyle`
   /* Color scheme */
   :root {    /* Primary colors */
-    --color-primary: #4a90e2;
-    --color-primary-rgb: 74, 144, 226;
-    --color-primary-light: #72abed;
-    --color-primary-dark: #3a73b4;
+    --color-primary: #FFCD38;
+    --color-primary-rgb: 255, 198, 27;
+    --color-primary-light: #FEE187;
+    --color-primary-dark: #FFBF00;
     
     /* Secondary colors */
     --color-secondary: #45a049;

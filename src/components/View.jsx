@@ -19,11 +19,11 @@ const TaskList = styled.div`
 // Empty state message
 const EmptyState = ({ view }) => {
   const messages = {
-    today: "Good job! You don't have any current tasks.",
-    'next seven days':
-      "Work it! You don't have any upcoming tasks these seven next days.",
-    completed: "You haven't completed any tasks yet.",
-    all: "You don't have any tasks yet."
+    all: "You don't have any tasks yet.",
+    today: "Good job! You don't have any tasks for today.",
+    upcoming:
+      "Work it! You don't have any upcoming tasks for the next seven days.",
+    completed: "You haven't completed any tasks yet."
   }
 
   return (
@@ -34,7 +34,7 @@ const EmptyState = ({ view }) => {
         color: 'var(--color-text-light)'
       }}
     >
-      <p>{messages[view]}</p>
+      <p>{messages[view] || 'No tasks to display.'}</p>
     </div>
   )
 }
@@ -86,8 +86,8 @@ export const View = () => {
 
       case 'today':
         filteredTasks = tasks.filter((task) => {
-          // Tasks with no due date or due today/past
-          if (!task.dueDate) return true
+          // Only include tasks due today
+          if (!task.dueDate) return false
           const dueDate = new Date(task.dueDate)
           dueDate.setHours(0, 0, 0, 0)
           // Use getTime() for date comparison
@@ -95,22 +95,23 @@ export const View = () => {
         })
         break
 
-      case 'next seven days':
+      case 'upcoming':
         filteredTasks = tasks.filter((task) => {
-          // Tasks due within the next 7 days
+          // Tasks due within the next 7 days (excluding today)
           if (!task.dueDate) return false
 
           const dueDate = new Date(task.dueDate)
           dueDate.setHours(0, 0, 0, 0)
 
+          // Create a date for tomorrow (not today)
+          const tomorrow = new Date(today)
+          tomorrow.setDate(today.getDate() + 1)
+
           const oneWeekFromToday = new Date(today)
           oneWeekFromToday.setDate(today.getDate() + 7)
 
           // Use getTime() for date comparison
-          return (
-            dueDate.getTime() >= today.getTime() &&
-            dueDate.getTime() <= oneWeekFromToday.getTime()
-          )
+          return dueDate.getTime() >= tomorrow.getTime()
         })
         break
 
@@ -129,7 +130,7 @@ export const View = () => {
   const sortingOptions = [
     { label: 'All', value: 'all' },
     { label: 'Today', value: 'today' },
-    { label: 'Next seven days', value: 'next seven days' },
+    { label: 'Upcoming', value: 'upcoming' },
     { label: 'Completed', value: 'completed' }
   ]
 
@@ -140,13 +141,7 @@ export const View = () => {
         options={sortingOptions}
         onChange={handleViewChange}
         value={activeView}
-      >
-        {sortingOptions.map((option) => (
-          <option key={option.value} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </Dropdown>
+      />
 
       <Tabs>
         <Tab
@@ -162,8 +157,8 @@ export const View = () => {
           Today
         </Tab>
         <Tab
-          $active={activeView === 'next seven days'}
-          onClick={() => setActiveView('next seven days')}
+          $active={activeView === 'upcoming'}
+          onClick={() => setActiveView('upcoming')}
         >
           Upcoming
         </Tab>

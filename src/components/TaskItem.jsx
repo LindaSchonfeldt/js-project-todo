@@ -45,7 +45,7 @@ const StyledBadge = styled.span`
   font-weight: bold;
   text-transform: uppercase;
   background-color: ${(props) => {
-    switch (props.priority) {
+    switch (props.$priority) {
       case 'high':
         return 'var(--color-priority-high)'
       case 'medium':
@@ -104,10 +104,10 @@ export const TaskItem = ({ task }) => {
   // Add defensive check for task properties
   if (!task) return null
   return (
-    <StyledTaskItem completed={task.completed}>
+    <StyledTaskItem $completed={task.completed}>
       <div className='topRow'>
         <p>{task.dueDate ? formatDate(task.dueDate) : 'No due date'}</p>
-        <StyledBadge priority={task.priority || 'low'}>
+        <StyledBadge $priority={task.priority || 'low'}>
           {task.priority || 'low'}
         </StyledBadge>
       </div>
