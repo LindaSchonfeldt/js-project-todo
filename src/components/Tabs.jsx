@@ -40,16 +40,19 @@ export const Tab = styled.button`
   padding: 0.5rem 1rem;
   border: none;
   border-radius: 4px;
-  background-color: ${(props) => (props.$active ? '#4a90e2' : '#e0e0e0')};
-  color: ${(props) => (props.$active ? 'white' : 'black')};
+  background-color: ${(props) =>
+    props.$active ? 'var(--color-primary)' : 'var(--color-border)'};
+  color: ${(props) =>
+    props.$active ? 'var(--color-surface)' : 'var(--color-text)'};
   cursor: pointer;
   transition: background-color 0.2s;
 
   &:hover {
-    background-color: ${(props) => (props.$active ? '#4a90e2' : '#d0d0d0')};
+    background-color: ${(props) =>
+      props.$active ? 'var(--color-primary-dark)' : 'var(--color-text-light)'};
   }
   &.active {
-    background-color: #4a90e2;
-    color: white;
+    background-color: var(--color-primary);
+    color: var(--color-surface);
   }
 `

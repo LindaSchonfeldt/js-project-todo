@@ -5,18 +5,16 @@ const StyledDropdown = styled.select`
   width: 100%;
   padding: 0.5rem;
   border-radius: 4px;
-  border: 1px solid #ccc;
-  background-color: #fff;
+  border: 1px solid var(--color-border);
+  background-color: var(--color-surface);
   font-size: 16px;
-  color: #333;
-
+  color: var(--color-text);
   &:focus {
     outline: none;
-    border-color: #4a90e2;
-    box-shadow: 0 0 5px rgba(74, 144, 226, 0.5);
+    border-color: var(--color-primary);
+    box-shadow: 0 0 5px rgba(var(--color-primary-rgb, 74, 144, 226), 0.5);
   }
   ${media.tablet} {
-    font-size: 18px;
   }
   ${media.laptop} {
     display: none;

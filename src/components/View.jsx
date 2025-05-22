@@ -27,7 +27,13 @@ const EmptyState = ({ view }) => {
   }
 
   return (
-    <div style={{ textAlign: 'center', padding: '2rem' }}>
+    <div
+      style={{
+        textAlign: 'center',
+        padding: '2rem',
+        color: 'var(--color-text-light)'
+      }}
+    >
       <p>{messages[view]}</p>
     </div>
   )

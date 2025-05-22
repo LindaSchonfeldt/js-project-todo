@@ -2,12 +2,13 @@ import styled from 'styled-components'
 import { useTaskStore } from '../stores/useTaskStore'
 import { CiSquareCheck } from 'react-icons/ci'
 import { FaTrash } from 'react-icons/fa'
+import { formatDate } from '../utils/dateUtils'
 
 const StyledTaskItem = styled.div`
   padding: 1rem;
-  background-color: white;
+  background-color: var(--color-surface);
   border-radius: 4px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 3px rgba(var(--color-text-rgb, 0, 0, 0), 0.1);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -23,7 +24,7 @@ const StyledTaskItem = styled.div`
     p {
       margin: 0;
       font-size: 0.875rem;
-      color: #666;
+      color: var(--color-text-light);
     }
   }
   .bottomRow {
@@ -46,20 +47,20 @@ const StyledBadge = styled.span`
   background-color: ${(props) => {
     switch (props.priority) {
       case 'high':
-        return '#ff5252'
+        return 'var(--color-priority-high)'
       case 'medium':
-        return '#ffb142'
+        return 'var(--color-priority-medium)'
       default:
-        return '#69c0ff'
+        return 'var(--color-priority-low)'
     }
   }};
-  color: white;
+  color: var(--color-surface);
 `
 
 const StyledDeleteButton = styled.button`
   background-color: transparent;
   border: none;
-  color: #ff5252;
+  color: var(--color-error);
   cursor: pointer;
   font-size: 1rem;
   font-weight: bold;
@@ -67,12 +68,12 @@ const StyledDeleteButton = styled.button`
   padding: 0.5rem 0.75rem 0.5rem 0;
 
   &:hover {
-    color: #ff1744;
+    color: var(--color-accent-dark);
   }
 `
 const StyledCompleteButton = styled.button`
   background-color: transparent;
-  color: #45a049;
+  color: var(--color-secondary);
   border: none;
   border-radius: 4px;
   cursor: pointer;
@@ -81,7 +82,7 @@ const StyledCompleteButton = styled.button`
   justify-content: center;
 
   &:hover {
-    color: #45a049;
+    color: var(--color-secondary-dark);
     svg {
       transform: scale(1.1); /* Makes the icon slightly larger on hover */
     }
@@ -95,31 +96,35 @@ const StyledCompleteButton = styled.button`
 export const TaskItem = ({ task }) => {
   const { completeTask, removeTask } = useTaskStore()
 
+  // Add defensive check for task properties
+  if (!task) return null
   return (
     <StyledTaskItem completed={task.completed}>
       <div className='topRow'>
-        {task.dueDate && (
-          <p>
-            {task.dueDate
-              ? new Date(task.dueDate).toLocaleDateString()
-              : '--/--/--'}
-          </p>
-        )}
-        <StyledBadge priority={task.priority}>{task.priority}</StyledBadge>
+        {task.dueDate && <p>{formatDate(task.dueDate)}</p>}
+        <StyledBadge priority={task.priority || 'low'}>
+          {task.priority || 'low'}
+        </StyledBadge>
       </div>
       <h3>{task.title}</h3>
       {task.description && <p>{task.description}</p>}
 
       <div className='bottomRow'>
-        <StyledDeleteButton onClick={() => removeTask(task.id)}>
+        <StyledDeleteButton
+          onClick={() => removeTask(task.id)}
+          aria-label='Delete task'
+        >
           <FaTrash size={16} />
         </StyledDeleteButton>
 
-        {!task.completed && (
-          <StyledCompleteButton onClick={() => completeTask(task.id)}>
-            <CiSquareCheck size={32} />
-          </StyledCompleteButton>
-        )}
+        <StyledCompleteButton
+          onClick={() => completeTask(task.id)}
+          aria-label={
+            task.completed ? 'Mark as incomplete' : 'Mark as complete'
+          }
+        >
+          <CiSquareCheck size={32} />
+        </StyledCompleteButton>
       </div>
     </StyledTaskItem>
   )
