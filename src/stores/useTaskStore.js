@@ -108,47 +108,21 @@ export const useTaskStore = create(
 
     // Complete a task
     // In the zustand store (useTaskStore.js or similar)
-    completeTask: (taskId) => {
+    completeTask: (id) => {
       set((state) => {
-        const taskToComplete = state.tasks.find((task) => task.id === taskId)
+        // Find the task by id
+        const taskIndex = state.tasks.findIndex((task) => task.id === id)
 
-        if (!taskToComplete) {
-          // Check if the task is in the completed array (for toggling back)
-          const completedTask = state.completedTasks.find(
-            (task) => task.id === taskId
-          )
+        // If task not found, return unchanged state
+        if (taskIndex === -1) return state
 
-          if (completedTask) {
-            // Move from completedTasks back to tasks
-            const updatedCompletedTasks = state.completedTasks.filter(
-              (task) => task.id !== taskId
-            )
+        // Get a copy of the task to be completed
+        const task = { ...state.tasks[taskIndex], completed: true }
 
-            const updatedTask = {
-              ...completedTask,
-              completed: false
-            }
-
-            return {
-              tasks: [...state.tasks, updatedTask],
-              completedTasks: updatedCompletedTasks
-            }
-          }
-
-          return state // Task not found in either array
-        }
-
-        // Move from tasks to completedTasks
-        const updatedTasks = state.tasks.filter((task) => task.id !== taskId)
-
-        const updatedTask = {
-          ...taskToComplete,
-          completed: true
-        }
-
+        // Return new state with task removed from tasks array and added to completedTasks array
         return {
-          tasks: updatedTasks,
-          completedTasks: [...state.completedTasks, updatedTask]
+          tasks: state.tasks.filter((task) => task.id !== id),
+          completedTasks: [...state.completedTasks, task]
         }
       })
 

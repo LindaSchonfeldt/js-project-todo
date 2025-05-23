@@ -4,6 +4,7 @@ import { useTaskStore } from '../stores/useTaskStore'
 import { TaskItem } from './TaskItem'
 import { Dropdown } from './Dropdown'
 import { Tabs, Tab } from './Tabs'
+import { CountBadge } from './CountBadge'
 
 const StyledView = styled.div`
   width: 100%;
@@ -81,16 +82,16 @@ export const View = () => {
 
     switch (activeView) {
       case 'all':
-        filteredTasks = [...(tasks || []), ...(completedTasks || [])]
+        // Show only incomplete tasks in the "all" view
+        filteredTasks = [...tasks]
         break
 
       case 'today':
         filteredTasks = tasks.filter((task) => {
-          // Only include tasks due today
+          // Only include incomplete tasks due today
           if (!task.dueDate) return false
           const dueDate = new Date(task.dueDate)
           dueDate.setHours(0, 0, 0, 0)
-          // Use getTime() for date comparison
           return dueDate.getTime() === today.getTime()
         })
         break
@@ -103,40 +104,83 @@ export const View = () => {
           const dueDate = new Date(task.dueDate)
           dueDate.setHours(0, 0, 0, 0)
 
-          // Create a date for tomorrow (not today)
           const tomorrow = new Date(today)
           tomorrow.setDate(today.getDate() + 1)
 
           const oneWeekFromToday = new Date(today)
           oneWeekFromToday.setDate(today.getDate() + 7)
 
-          // Use getTime() for date comparison
-          return dueDate.getTime() >= tomorrow.getTime()
+          return (
+            dueDate.getTime() >= tomorrow.getTime() &&
+            dueDate.getTime() <= oneWeekFromToday.getTime()
+          )
         })
         break
 
       case 'completed':
+        // Only show completed tasks in the completed view
         filteredTasks = completedTasks || []
         break
 
+      case 'no-date':
+        // Only show tasks without dates
+        filteredTasks = tasks.filter((task) => !task.dueDate)
+        break
+
       default:
-        filteredTasks = tasks || []
+        filteredTasks = tasks
     }
 
     // Apply priority sorting to the filtered tasks
     return sortTasksByPriority(filteredTasks)
   }
 
+  // Add these functions to calculate counts
+  const getAllTasksCount = () => tasks.length + completedTasks.length
+  const getTodayTasksCount = () => {
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+
+    return tasks.filter((task) => {
+      if (!task.dueDate) return false
+      const dueDate = new Date(task.dueDate)
+      dueDate.setHours(0, 0, 0, 0)
+      return dueDate.getTime() === today.getTime()
+    }).length
+  }
+
+  const getUpcomingTasksCount = () => {
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+
+    const tomorrow = new Date(today)
+    tomorrow.setDate(today.getDate() + 1)
+
+    const oneWeekFromToday = new Date(today)
+    oneWeekFromToday.setDate(today.getDate() + 7)
+
+    return tasks.filter((task) => {
+      if (!task.dueDate) return false
+      const dueDate = new Date(task.dueDate)
+      dueDate.setHours(0, 0, 0, 0)
+      return (
+        dueDate.getTime() >= tomorrow.getTime() &&
+        dueDate.getTime() <= oneWeekFromToday.getTime()
+      )
+    }).length
+  }
+
+  const getCompletedTasksCount = () => completedTasks.length
+
   const sortingOptions = [
-    { label: 'All', value: 'all' },
-    { label: 'Today', value: 'today' },
-    { label: 'Upcoming', value: 'upcoming' },
-    { label: 'Completed', value: 'completed' }
+    { label: `All (${getAllTasksCount()})`, value: 'all' },
+    { label: `Today (${getTodayTasksCount()})`, value: 'today' },
+    { label: `Upcoming (${getUpcomingTasksCount()})`, value: 'upcoming' },
+    { label: `Completed (${getCompletedTasksCount()})`, value: 'completed' }
   ]
 
   return (
     <StyledView>
-      {/* Dropdown view for mobile and tablet */}
       <Dropdown
         options={sortingOptions}
         onChange={handleViewChange}
@@ -148,25 +192,28 @@ export const View = () => {
           $active={activeView === 'all'}
           onClick={() => setActiveView('all')}
         >
-          All
+          All{' '}
+          <CountBadge>
+            {getAllTasksCount() > 0 ? `(${getAllTasksCount()})` : ''}
+          </CountBadge>
         </Tab>
         <Tab
           $active={activeView === 'today'}
           onClick={() => setActiveView('today')}
         >
-          Today
+          Today <CountBadge>({getTodayTasksCount()})</CountBadge>
         </Tab>
         <Tab
           $active={activeView === 'upcoming'}
           onClick={() => setActiveView('upcoming')}
         >
-          Upcoming
+          Upcoming <CountBadge>({getUpcomingTasksCount()})</CountBadge>
         </Tab>
         <Tab
           $active={activeView === 'completed'}
           onClick={() => setActiveView('completed')}
         >
-          Completed
+          Completed <CountBadge>({getCompletedTasksCount()})</CountBadge>
         </Tab>
       </Tabs>
 
