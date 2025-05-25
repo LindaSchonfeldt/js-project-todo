@@ -54,7 +54,7 @@ const StyledBadge = styled.span`
         return 'var(--color-priority-low)'
     }
   }};
-  color: var(--color-surface);
+  color: var(--color-text);
 `
 
 const StyledDeleteButton = styled.button`

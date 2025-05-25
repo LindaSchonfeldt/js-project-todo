@@ -31,7 +31,7 @@ export const GlobalStyle = createGlobalStyle`
     /* Status colors */
     --color-success: #05C46B;
     --color-warning: #FFC61B;
-    --color-error: #FF314F;
+    --color-error: #910015;
     
     /* Priority colors */
     --color-priority-high: #FF314F;

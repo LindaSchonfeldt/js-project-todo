@@ -138,10 +138,8 @@ export const View = () => {
     return sortTasksByPriority(filteredTasks)
   }
 
-  // Update just this function in your View component:
   const getAllTasksCount = () => tasks.length // Only incomplete tasks
 
-  // Keep all other count functions the same:
   const getTodayTasksCount = () => {
     const today = new Date()
     today.setHours(0, 0, 0, 0)

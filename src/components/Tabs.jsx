@@ -43,7 +43,7 @@ export const Tab = styled.button`
   background-color: ${(props) =>
     props.$active ? 'var(--color-primary)' : 'var(--color-border)'};
   color: ${(props) =>
-    props.$active ? 'var(--color-surface)' : 'var(--color-text)'};
+    props.$active ? 'var(--color-text)' : 'var(--color-text)'};
   cursor: pointer;
   transition: background-color 0.2s;
   font-size: 1rem;
@@ -51,9 +51,11 @@ export const Tab = styled.button`
   &:hover {
     background-color: ${(props) =>
       props.$active ? 'var(--color-primary-dark)' : 'var(--color-text-light)'};
+    color: ${(props) =>
+      props.$active ? 'var(--color-text)' : 'var(--color-text-dark)'};
   }
   &.active {
     background-color: var(--color-primary);
-    color: var(--color-surface);
+    color: var(--color-text);
   }
 `
