@@ -37,7 +37,7 @@ export const Tabs = ({ children }) => {
 }
 
 export const Tab = styled.button`
-  padding: 0.5rem 1rem;
+  padding: 1rem 1.5rem;
   border: none;
   border-radius: 4px;
   background-color: ${(props) =>
