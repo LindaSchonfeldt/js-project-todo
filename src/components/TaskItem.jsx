@@ -127,7 +127,7 @@ export const TaskItem = ({ task }) => {
           aria-label={
             task.completed ? 'Mark as incomplete' : 'Mark as complete'
           }
-          completed={task.completed}
+          $completed={task.completed}
         >
           {task.completed ? (
             <FaRegSquareCheck size={32} />

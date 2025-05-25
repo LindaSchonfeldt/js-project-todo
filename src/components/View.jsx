@@ -20,7 +20,7 @@ const TaskList = styled.div`
 // Empty state message
 const EmptyState = ({ view }) => {
   const messages = {
-    all: "You don't have any tasks yet.",
+    all: "Yay, you don't have any tasks for now.",
     today: "Good job! You don't have any tasks for today.",
     upcoming:
       "Work it! You don't have any upcoming tasks for the next seven days.",
@@ -42,7 +42,10 @@ const EmptyState = ({ view }) => {
 
 export const View = () => {
   const [activeView, setActiveView] = useState('all')
-  const { tasks, completedTasks } = useTaskStore()
+
+  // Use individual selectors for better reactivity
+  const tasks = useTaskStore((state) => state.tasks)
+  const completedTasks = useTaskStore((state) => state.completedTasks)
 
   // Add the handleViewChange function here
   const handleViewChange = (e) => {
@@ -135,8 +138,10 @@ export const View = () => {
     return sortTasksByPriority(filteredTasks)
   }
 
-  // Add these functions to calculate counts
-  const getAllTasksCount = () => tasks.length + completedTasks.length
+  // Update just this function in your View component:
+  const getAllTasksCount = () => tasks.length // Only incomplete tasks
+
+  // Keep all other count functions the same:
   const getTodayTasksCount = () => {
     const today = new Date()
     today.setHours(0, 0, 0, 0)
@@ -193,27 +198,40 @@ export const View = () => {
           onClick={() => setActiveView('all')}
         >
           All{' '}
-          <CountBadge>
-            {getAllTasksCount() > 0 ? `(${getAllTasksCount()})` : ''}
-          </CountBadge>
+          <CountBadge
+            count={`(${getAllTasksCount()})`}
+            active={activeView === 'all'}
+          />
         </Tab>
         <Tab
           $active={activeView === 'today'}
           onClick={() => setActiveView('today')}
         >
-          Today <CountBadge>({getTodayTasksCount()})</CountBadge>
+          Today{' '}
+          <CountBadge
+            count={`(${getTodayTasksCount()})`}
+            active={activeView === 'today'}
+          />
         </Tab>
         <Tab
           $active={activeView === 'upcoming'}
           onClick={() => setActiveView('upcoming')}
         >
-          Upcoming <CountBadge>({getUpcomingTasksCount()})</CountBadge>
+          Upcoming{' '}
+          <CountBadge
+            count={`(${getUpcomingTasksCount()})`}
+            active={activeView === 'upcoming'}
+          />
         </Tab>
         <Tab
           $active={activeView === 'completed'}
           onClick={() => setActiveView('completed')}
         >
-          Completed <CountBadge>({getCompletedTasksCount()})</CountBadge>
+          Completed{' '}
+          <CountBadge
+            count={`(${getCompletedTasksCount()})`}
+            active={activeView === 'completed'}
+          />
         </Tab>
       </Tabs>
 

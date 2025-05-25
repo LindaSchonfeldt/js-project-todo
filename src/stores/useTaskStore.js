@@ -110,16 +110,11 @@ export const useTaskStore = create(
     // In the zustand store (useTaskStore.js or similar)
     completeTask: (id) => {
       set((state) => {
-        // Find the task by id
         const taskIndex = state.tasks.findIndex((task) => task.id === id)
-
-        // If task not found, return unchanged state
         if (taskIndex === -1) return state
 
-        // Get a copy of the task to be completed
         const task = { ...state.tasks[taskIndex], completed: true }
 
-        // Return new state with task removed from tasks array and added to completedTasks array
         return {
           tasks: state.tasks.filter((task) => task.id !== id),
           completedTasks: [...state.completedTasks, task]

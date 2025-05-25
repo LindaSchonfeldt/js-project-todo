@@ -3,6 +3,7 @@ import { media } from '../styles/media'
 
 const DropdownContainer = styled.div`
   width: 100%;
+  margin-bottom: 1rem;
 `
 
 const Label = styled.label`

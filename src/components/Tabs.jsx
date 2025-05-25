@@ -46,6 +46,7 @@ export const Tab = styled.button`
     props.$active ? 'var(--color-surface)' : 'var(--color-text)'};
   cursor: pointer;
   transition: background-color 0.2s;
+  font-size: 1rem;
 
   &:hover {
     background-color: ${(props) =>

@@ -2,7 +2,6 @@ import { Dropdown } from '../components/Dropdown'
 import { TaskForm } from '../components/TaskForm'
 import { View } from '../components/View'
 import { appContentStore } from '../stores/appContentStore'
-import { Counter } from '../components/CountBadge'
 
 export const Home = () => {
   const { appContent } = appContentStore() // Accessing (de-constructing) the appContent from Zustand store
