@@ -15,6 +15,7 @@ export const appContentStore = create(() => ({
     taskTitlePlaceholder: 'Title',
     taskDescriptionPlaceholder: 'Description',
     // Priority options
+    priorityPlaceholder: 'Priority',
     lowPriority: 'Low',
     mediumPriority: 'Medium',
     highPriority: 'High'

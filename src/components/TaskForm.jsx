@@ -208,10 +208,13 @@ export const TaskForm = () => {
         <select
           id='priority'
           name='priority'
-          value={priority || 'low'}
+          value={priority || ''}
           onChange={(e) => setField('priority', e.target.value)}
           onBlur={() => handleBlur('priority')}
         >
+          <option value='' disabled>
+            {appContent.priorityPlaceholder || 'Priority'}
+          </option>
           <option value='low'>{appContent.lowPriority || 'Low'}</option>
           <option value='medium'>
             {appContent.mediumPriority || 'Medium'}

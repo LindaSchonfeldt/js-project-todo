@@ -7,7 +7,7 @@ export const useTaskFormStore = create(
     id: 0,
     dueDate: null,
     title: '',
-    priority: 'low', // 'low', 'medium', 'high'
+    priority: '',
     description: '',
     completed: false,
 
@@ -59,53 +59,48 @@ export const useTaskFormStore = create(
 
     // Validate a specific field
     validateField: (field) => {
-      const state = get()
-      let errorMessage = ''
+      set((state) => {
+        const newErrors = { ...state.errors }
 
-      switch (field) {
-        case 'title':
-          if (!state.title.trim()) {
-            errorMessage = 'Title is required'
-          } else if (state.title.length > 100) {
-            errorMessage = 'Title must be less than 100 characters'
-          }
-          break
-
-        case 'description':
-          if (state.description.length > 500) {
-            errorMessage = 'Description must be less than 500 characters'
-          }
-          break
-
-        case 'dueDate':
-          if (state.dueDate !== null) {
-            const today = new Date()
-            today.setHours(0, 0, 0, 0)
-
-            if (new Date(state.dueDate) < today) {
-              errorMessage = 'Due date cannot be in the past'
+        switch (field) {
+          case 'title':
+            if (!state.title.trim()) {
+              newErrors.title = 'Title is required'
+            } else {
+              delete newErrors.title
             }
-          }
-          break
+            break
 
-        case 'priority':
-          if (!['low', 'medium', 'high'].includes(state.priority)) {
-            errorMessage = 'Priority must be low, medium, or high'
-          }
-          break
+          case 'description':
+            if (state.description.length > 500) {
+              newErrors.description =
+                'Description must be less than 500 characters'
+            } else {
+              delete newErrors.description
+            }
+            break
 
-        default:
-          break
-      }
+          case 'dueDate':
+            if (state.dueDate !== null) {
+              const today = new Date()
+              today.setHours(0, 0, 0, 0)
 
-      set((state) => ({
-        errors: {
-          ...state.errors,
-          [field]: errorMessage
+              if (new Date(state.dueDate) < today) {
+                newErrors.dueDate = 'Due date cannot be in the past'
+              } else {
+                delete newErrors.dueDate
+              }
+            }
+            break
+
+          // Remove priority validation case entirely
+
+          default:
+            break
         }
-      }))
 
-      return errorMessage === ''
+        return { errors: newErrors }
+      })
     },
 
     // Validate all fields
