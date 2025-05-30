@@ -1,4 +1,4 @@
-import styled from "styled-components"
+import styled from 'styled-components'
 // Variants of buttons - primary, secondary, danger, success
 
 const StyledButton = styled.button`
@@ -60,8 +60,8 @@ const StyledButton = styled.button`
   }
 `
 export const Button = ({
-  variant = "primary",
-  size = "medium",
+  variant = 'primary',
+  size = 'medium',
   disabled = false,
   children,
   onClick,

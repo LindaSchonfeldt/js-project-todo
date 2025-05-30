@@ -28,7 +28,7 @@ export const useTaskFormStore = create(
         id: 0,
         dueDate: null,
         title: '',
-        priority: 'low',
+        priority: '',
         description: '',
         completed: false,
         errors: {
@@ -59,7 +59,7 @@ export const useTaskFormStore = create(
 
     // Validate a specific field
     validateField: (field) => {
-      set((state) => {
+      return set((state) => {
         const newErrors = { ...state.errors }
 
         switch (field) {
@@ -67,7 +67,7 @@ export const useTaskFormStore = create(
             if (!state.title.trim()) {
               newErrors.title = 'Title is required'
             } else {
-              delete newErrors.title
+              newErrors.title = '' // Set to empty string instead of deleting
             }
             break
 
@@ -76,7 +76,7 @@ export const useTaskFormStore = create(
               newErrors.description =
                 'Description must be less than 500 characters'
             } else {
-              delete newErrors.description
+              newErrors.description = ''
             }
             break
 
@@ -88,12 +88,10 @@ export const useTaskFormStore = create(
               if (new Date(state.dueDate) < today) {
                 newErrors.dueDate = 'Due date cannot be in the past'
               } else {
-                delete newErrors.dueDate
+                newErrors.dueDate = ''
               }
             }
             break
-
-          // Remove priority validation case entirely
 
           default:
             break
@@ -106,14 +104,21 @@ export const useTaskFormStore = create(
     // Validate all fields
     validateForm: () => {
       const state = get()
-      const fields = ['title', 'description', 'dueDate', 'priority']
 
-      // Validate each field
-      const fieldResults = fields.map((field) => state.validateField(field))
-      const isFormValid = fieldResults.every((valid) => valid)
+      // Only check required fields
+      const titleValid = state.title && state.title.trim() !== ''
 
-      set({ isValid: isFormValid })
-      return isFormValid
+      // Check that no fields have error messages
+      const noErrorMessages = Object.values(state.errors).every(
+        (error) => !error
+      )
+
+      const isValid = titleValid && noErrorMessages
+
+      // Update the isValid state
+      set({ isValid })
+
+      return isValid
     },
 
     // Load task data into form

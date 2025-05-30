@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import { useTaskStore } from '../stores/useTaskStore'
 import { useTaskFormStore } from '../stores/useTaskFormStore'
 import { appContentStore } from '../stores/appContentStore'
+import { useDisabledButton } from '../hooks/useDisabledButton'
 import { Button } from './Button'
 
 const StyledForm = styled.form`
@@ -31,27 +32,6 @@ const StyledForm = styled.form`
     &:focus {
       border-color: var(--color-primary);
       box-shadow: 0 0 0 2px rgba(var(--color-primary-rgb, 74, 144, 226), 0.2);
-    }
-  }
-
-  button {
-    margin-top: 1rem;
-    background-color: var(--color-primary);
-    color: var(--color-surface);
-    border: none;
-    border-radius: 4px;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-
-    &:hover {
-      background-color: var(--color-primary-dark);
-    }
-
-    &:disabled {
-      background-color: var(--color-border);
-      cursor: not-allowed;
     }
   }
 
@@ -104,11 +84,25 @@ export const TaskForm = () => {
     validateField,
     validateForm
   } = useTaskFormStore()
+
   const [isFormValid, setIsFormValid] = useState(false)
 
+  const { showMessage, handleDisabledClick, message } = useDisabledButton(
+    !isFormValid,
+    'Please complete all required fields'
+  )
+
   useEffect(() => {
-    setIsFormValid(validateForm())
-  }, [dueDate, title, description, priority, validateForm])
+    const isValid = validateForm()
+    console.log('Form validation:', {
+      isValid,
+      title,
+      dueDate,
+      priority,
+      errors
+    })
+    setIsFormValid(isValid)
+  }, [dueDate, title, description, priority, errors, validateForm])
 
   const { appContent } = appContentStore()
 
@@ -223,9 +217,14 @@ export const TaskForm = () => {
         </select>
         {errors.priority && <p className='error-message'>{errors.priority}</p>}
       </div>
-      <Button type='submit' disabled={!isFormValid}>
+      <Button
+        type='submit'
+        disabled={!isFormValid}
+        onClick={handleDisabledClick}
+      >
         {appContent.addTaskButton || 'Add Task'}
       </Button>
+      {showMessage && <p className='error-message'>{message}</p>}
     </StyledForm>
   )
 }
