@@ -1,8 +1,10 @@
-import styled from 'styled-components'
-import { useTaskStore } from '../stores/useTaskStore'
-import { FaRegSquare, FaRegSquareCheck } from 'react-icons/fa6'
 import { FaTrash } from 'react-icons/fa'
+import { FaRegSquare, FaRegSquareCheck } from 'react-icons/fa6'
+import styled from 'styled-components'
+
+import { useTaskStore } from '../stores/useTaskStore'
 import { formatDate } from '../utils/dateUtils'
+import { PriorityBadge } from './PriorityBadge'
 
 const StyledTaskItem = styled.div`
   padding: 1rem;
@@ -14,6 +16,15 @@ const StyledTaskItem = styled.div`
   justify-content: space-between;
   align-items: flex-start;
 
+  /* Add overdue styling */
+  ${(props) =>
+    props.$overdue &&
+    !props.$completed &&
+    `
+    border-left: 4px solid var(--color-danger);
+    background-color: rgba(var(--color-danger-rgb, 220, 53, 69), 0.05);
+  `}
+
   .topRow {
     display: flex;
     flex-direction: row;
@@ -21,10 +32,16 @@ const StyledTaskItem = styled.div`
     justify-content: space-between;
     width: 100%;
     margin-bottom: 0.5rem;
+
     p {
       margin: 0;
       font-size: 0.875rem;
-      color: var(--color-text-light);
+      color: ${(props) =>
+        props.$overdue && !props.$completed
+          ? 'var(--color-danger)'
+          : 'var(--color-text-light)'};
+      font-weight: ${(props) =>
+        props.$overdue && !props.$completed ? 'bold' : 'normal'};
     }
   }
   .bottomRow {
@@ -36,27 +53,6 @@ const StyledTaskItem = styled.div`
     margin-top: 0.5rem;
   }
 `
-
-// Badge for priority
-const StyledBadge = styled.span`
-  padding: 0.25rem 0.5rem;
-  border-radius: 999px;
-  font-size: 0.75rem;
-  font-weight: bold;
-  text-transform: uppercase;
-  background-color: ${(props) => {
-    switch (props.$priority) {
-      case 'high':
-        return 'var(--color-priority-high)'
-      case 'medium':
-        return 'var(--color-priority-medium)'
-      default:
-        return 'var(--color-priority-low)'
-    }
-  }};
-  color: var(--color-text);
-`
-
 const StyledDeleteButton = styled.button`
   background-color: transparent;
   border: none;
@@ -95,21 +91,52 @@ const StyledCompleteButton = styled.button`
     }
   }
 `
+const StyledOverdueBadge = styled.span`
+  background-color: rgba(220, 53, 69, 0.1);
+  color: var(--color-danger);
+  border-radius: 12px;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  margin-left: 0.5rem;
+`
 
 export const TaskItem = ({ task }) => {
-  console.log('Task in TaskItem:', task)
+  const { completeTask, uncompleteTask, removeTask } = useTaskStore()
 
-  const { completeTask, removeTask } = useTaskStore()
+  const handleToggleComplete = () => {
+    if (task.completed) {
+      uncompleteTask(task.id)
+    } else {
+      completeTask(task.id)
+    }
+  }
 
   // Add defensive check for task properties
   if (!task) return null
+
+  const isOverdue = (dueDate) => {
+    if (!dueDate) return false
+
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+
+    const taskDue = new Date(dueDate)
+    taskDue.setHours(0, 0, 0, 0)
+
+    return taskDue.getTime() < today.getTime()
+  }
+
+  const taskIsOverdue = isOverdue(task.dueDate)
+
   return (
-    <StyledTaskItem $completed={task.completed}>
+    <StyledTaskItem $completed={task.completed} $overdue={taskIsOverdue}>
       <div className='topRow'>
-        <p>{task.dueDate ? formatDate(task.dueDate) : 'No due date'}</p>
-        <StyledBadge $priority={task.priority || 'low'}>
-          {task.priority || 'low'}
-        </StyledBadge>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <p>{task.dueDate ? formatDate(task.dueDate) : 'No due date'}</p>
+          {taskIsOverdue && <StyledOverdueBadge>⚠️ Overdue</StyledOverdueBadge>}
+        </div>
+        {/* Only show PriorityBadge if there's a due date */}
+        {task.dueDate && <PriorityBadge priority={task.priority} />}
       </div>
       <h3>{task.title}</h3>
       {task.description && <p>{task.description}</p>}
@@ -123,7 +150,7 @@ export const TaskItem = ({ task }) => {
         </StyledDeleteButton>
 
         <StyledCompleteButton
-          onClick={() => completeTask(task.id)}
+          onClick={handleToggleComplete}
           aria-label={
             task.completed ? 'Mark as incomplete' : 'Mark as complete'
           }

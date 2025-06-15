@@ -125,6 +125,26 @@ export const useTaskStore = create(
       get().saveToLocalStorage()
     },
 
+    // Uncomplete a task
+    uncompleteTask: (id) => {
+      set((state) => {
+        const taskIndex = state.completedTasks.findIndex(
+          (task) => task.id === id
+        )
+        if (taskIndex === -1) return state
+
+        const task = { ...state.completedTasks[taskIndex], completed: false }
+
+        return {
+          completedTasks: state.completedTasks.filter((task) => task.id !== id),
+          tasks: [...state.tasks, task]
+        }
+      })
+
+      // Save changes to localStorage
+      get().saveToLocalStorage()
+    },
+
     // Get next ID for a new task
     getNextId: () => {
       const state = get()
